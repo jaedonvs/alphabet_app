@@ -2,26 +2,18 @@ package com.alphabetbook.app
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.GridView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
-import java.nio.file.Files
 import java.nio.file.Files.exists
 
 
@@ -75,6 +67,17 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    private fun createAlphabet() : Array<String> {
+        val alphabet = Array(26){""}
+        var counter=65
+        for (i in 0..25){
+            alphabet[i] = counter.toChar().toString()
+            counter++
+        }
+
+        return alphabet
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -94,12 +97,7 @@ class MainActivity : AppCompatActivity() {
         val gridview = findViewById<GridView>(R.id.gridview)
 
         //create alphabet array
-        val alphabet = Array(26){""}
-        var counter=65
-        for (i in 0..25){
-            alphabet[i] = counter.toChar().toString()
-            counter++
-        }
+        val alphabet = createAlphabet()
 
         //set gridview to alphabets
         val adapter = ArrayAdapter(applicationContext, android.R.layout.simple_dropdown_item_1line, alphabet)
