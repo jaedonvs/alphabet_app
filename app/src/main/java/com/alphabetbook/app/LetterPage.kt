@@ -11,9 +11,14 @@ import android.widget.GridView
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
+import kotlin.properties.Delegates
 
 
 class LetterPage : AppCompatActivity() {
+
+    private var num by Delegates.notNull<Int>()
+    private lateinit var alphabet : Array<String>
+    private lateinit var name : String
 
     //get the image from local memory
     private fun getImage(name: String): Bitmap? {
@@ -94,21 +99,32 @@ class LetterPage : AppCompatActivity() {
         setContentView(R.layout.activity_letter_page)
 
         //get values called from previous intent
-        val num = intent.getIntExtra("num", 0)
-        val alphabet = intent.getStringArrayExtra("alphabet")
-        val name = intent.getStringExtra("name")?.lowercase()
+        if(intent != null) {
+            num = intent.getIntExtra("num", 0)
+            alphabet = intent.getStringArrayExtra("alphabet") as Array<String>
+            name = intent.getStringExtra("name")?.lowercase().toString()
+        }
 
-        //set photo that was first clicked
+        //set photo that was first clicked+*
         val imageView = findViewById<ImageView>(R.id.imageView)
-        imageView.setImageBitmap(name?.let { this.getImage(it) })
+        imageView.setImageBitmap(name.let { this.getImage(it) })
 
         //create bottom navigation
         val nav = createBottomNav()
 
         //nav functionality
-        if (alphabet != null) {
-            navFunctionality(nav, num, imageView, alphabet)
-        }
+        navFunctionality(nav, num, imageView, alphabet)
+    }
 
+    override fun onPause() {
+        super.onPause()
+        val prefs = getSharedPreferences("X", MODE_PRIVATE)
+        val editor = prefs.edit()
+
+        editor.putString("lastActivity", javaClass.name)
+        editor.putInt("num", num)
+        editor.putString("name", name)
+
+        editor.commit()
     }
 }

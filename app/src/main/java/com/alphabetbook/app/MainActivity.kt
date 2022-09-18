@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.GridView
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +16,7 @@ import androidx.core.app.ActivityCompat
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files.exists
+import kotlin.properties.Delegates
 
 
 class MainActivity : AppCompatActivity() {
@@ -97,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         val gridview = findViewById<GridView>(R.id.gridview)
 
         //create alphabet array
-        val alphabet = createAlphabet()
+        val alphabet = createAlphabet() //removed val
 
         //set gridview to alphabets
         val adapter = ArrayAdapter(applicationContext, android.R.layout.simple_dropdown_item_1line, alphabet)
@@ -113,5 +115,13 @@ class MainActivity : AppCompatActivity() {
 
             startActivity(intent)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val prefs = getSharedPreferences("X", MODE_PRIVATE)
+        val editor = prefs.edit()
+        editor.putString("lastActivity", javaClass.name)
+        editor.commit()
     }
 }
